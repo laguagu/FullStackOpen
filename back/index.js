@@ -1,8 +1,18 @@
 const { request, response } = require('express');
 const express = require('express')
+const morgan = require('morgan')
+
+
+// Morgan loggaa post metodin sisällön consoliin
+morgan.token('nimi', function getId (req, res) {
+  const body = JSON.stringify(req.body)
+  return body
+})
+
 const app = express()
 
 
+app.use(morgan(':method :url :response-time ms :nimi'))
 app.use(express.json())
 
 
@@ -96,6 +106,12 @@ let notes = [
   
     response.status(204).end()
   })
+
+  const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unknown endpoint' })
+  }
+  
+  app.use(unknownEndpoint)
 
 
 const PORT = 3001
