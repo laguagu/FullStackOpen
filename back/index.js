@@ -1,17 +1,20 @@
 const { request, response } = require('express');
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
+
 
 
 // Morgan loggaa post metodin sisällön consoliin
-morgan.token('nimi', function getId (req, res) {
+morgan.token('nimi', function getId (req) {
   const body = JSON.stringify(req.body)
   return body
 })
 
 const app = express()
 
-
+app.use(express.static('build'))
+app.use(cors())
 app.use(morgan(':method :url :response-time ms :nimi'))
 app.use(express.json())
 
@@ -114,6 +117,6 @@ let notes = [
   app.use(unknownEndpoint)
 
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT)
 console.log(`Server running on port ${PORT}`)
