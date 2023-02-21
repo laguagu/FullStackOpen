@@ -74,6 +74,9 @@ let notes = [
       name: body.name,
       number: body.number
     }
+
+    notes = notes.concat(note)
+
     response.json(note)
   })
 
