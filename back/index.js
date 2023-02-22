@@ -1,17 +1,17 @@
-const { request, response } = require('express');
+require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const app = express()
 
-
+// MongoDB
+const Person = require('./models/note')
 
 // Morgan loggaa post metodin sisällön consoliin
 morgan.token('nimi', function getId (req) {
   const body = JSON.stringify(req.body)
   return body
 })
-
-const app = express()
 
 app.use(express.static('build'))
 app.use(cors())
@@ -85,8 +85,10 @@ let notes = [
     res.send('<h1>Hello World!</h1>')
   })
   
-  app.get('/api/persons', (req, res) => {
-    res.json(notes)
+  app.get('/api/persons', (request, response) => {
+    Person.find({}).then(notes => {
+      response.json(notes)
+    })
   })
 
   app.get('/api/persons/:id', (request, response) => {
@@ -120,6 +122,6 @@ let notes = [
   app.use(unknownEndpoint)
 
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT)
 console.log(`Server running on port ${PORT}`)
