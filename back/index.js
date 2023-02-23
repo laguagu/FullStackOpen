@@ -69,15 +69,16 @@ let notes = [
       })
     }
 
-    const note = {
-      id: generateId(),
+    const note = new Person({
+      // id: generateId(),
       name: body.name,
       number: body.number
-    }
+    })
 
-    notes = notes.concat(note)
+    note.save().then(savedPerson => {
+      response.json(savedPerson)
+    })
 
-    response.json(note)
   })
 
     // GETS
@@ -91,6 +92,11 @@ let notes = [
     })
   })
 
+  // app.get('/api/persons/:id', (request, response) => {
+  //   Person.findById(request.params.id).then(note => {
+  //     response.json(note)
+  //   })
+  // })
   app.get('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
     const note = notes.find(note => note.id === id)
