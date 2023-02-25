@@ -14,9 +14,9 @@ morgan.token('nimi', function getId (req) {
 })
 
 app.use(express.static('build'))
-app.use(cors())
-app.use(morgan(':method :url :response-time ms :nimi'))
 app.use(express.json())
+app.use(morgan(':method :url :response-time ms :nimi'))
+app.use(cors())
 
 
 const date = new Date();
@@ -114,12 +114,28 @@ let notes = [
 
     // DELETES
   app.delete('/api/persons/:id', (request, response) => {
-    const id = Person.find(request.params.id)
-    notes = notes.filter(note => note.id !== id)
-  
-    response.status(204).end()
-  })
+    Person.findByIdAndRemove(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
+})
 
+  // UPDATE / PUT
+  app.put('/api/persons/:id', (request, response, next) => {
+    const body = request.body
+  
+    const note = {
+      name: body.content,
+      number: body.important,
+    }
+    Person.findByIdAndUpdate(request.params.id, note, { new: true })
+    .then(updatedNote => {
+      response.json(updatedNote)
+    })
+    .catch(error => next(error))
+})
+  
   const unknownEndpoint = (request, response) => {
     response.status(404).send({ error: 'unknown endpoint' })
   }
