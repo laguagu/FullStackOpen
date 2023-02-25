@@ -43,6 +43,7 @@ let notes = [
   },
 ];
 
+      // ID Generointi
   const generateId = () => {
     const maxId = notes.length > 0
       ? Math.max(...notes.map(n => n.id))
@@ -92,22 +93,20 @@ let notes = [
     })
   })
 
-  // app.get('/api/persons/:id', (request, response) => {
-  //   Person.findById(request.params.id).then(note => {
-  //     response.json(note)
-  //   })
-  // })
   app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const note = notes.find(note => note.id === id)
-    
-    if (note) {
-      response.json(note)
-    } else {
-      response.status(404).end()
-    }
-  })
-
+    Person.findById(request.params.id)
+    .then(note => {
+      if (note) {
+        response.json(note)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => {
+      console.log(error)
+      response.status(400).send({ error: 'malformatted id' })
+    })
+})
   app.get("/info", (request,response) => {
     response.send(`Phonebook has info for ${notes.length} people <br>
     ${date}`)
@@ -115,7 +114,7 @@ let notes = [
 
     // DELETES
   app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
+    const id = Person.find(request.params.id)
     notes = notes.filter(note => note.id !== id)
   
     response.status(204).end()
