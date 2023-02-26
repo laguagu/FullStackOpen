@@ -7,7 +7,7 @@ const app = express()
 // MongoDB
 const Person = require('./models/note')
 
-// Morgan loggaa post metodin sisällön consoliin
+// Morgan loggaa HTTP metodin sisällön consoliin
 morgan.token('nimi', function getId (req) {
   const body = JSON.stringify(req.body)
   return body
@@ -18,6 +18,18 @@ app.use(express.json())
 app.use(morgan(':method :url :response-time ms :nimi'))
 app.use(cors())
 
+// Virheiden käsittely
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+  }
+
+  next(error)
+}
 
 const date = new Date();
 let notes = [
@@ -52,23 +64,9 @@ let notes = [
   }
   
     // POSTS
-  app.post("/api/persons/",(request, response) => {
+  app.post("/api/persons/",(request, response, next) => {
     const body = request.body
     const name = notes.find(nimi => nimi.name.toLowerCase() === body.name.toLowerCase())
-
-    console.log(name)
-  
-    // ERRORS jos nimi tai numerokenttä on tyhjä tai nimi on listassa tai nimi ei ole uniikki
-    if (!body.name && body.number) {
-      return response.status(400).json({
-        error: "Missing name or number field"
-      })
-    }
-    if (name) {
-      return response.status(400).json({
-        error:"Name must be unique"
-      })
-    }
 
     const note = new Person({
       // id: generateId(),
@@ -76,9 +74,16 @@ let notes = [
       number: body.number
     })
 
+    if (name) {
+      return response.status(400).json({
+        error:"Name must be unique"
+      })
+    }
+
     note.save().then(savedPerson => {
       response.json(savedPerson)
     })
+    .catch(error => next(error))
 
   })
 
@@ -129,7 +134,9 @@ let notes = [
       name: body.content,
       number: body.important,
     }
-    Person.findByIdAndUpdate(request.params.id, note, { new: true })
+    Person.findByIdAndUpdate(request.params.id, note, 
+      { new: true, runValidators: true, context: 'query' }
+    )
     .then(updatedNote => {
       response.json(updatedNote)
     })
@@ -141,6 +148,7 @@ let notes = [
   }
   
   app.use(unknownEndpoint)
+  app.use(errorHandler)
 
 
 const PORT = process.env.PORT
