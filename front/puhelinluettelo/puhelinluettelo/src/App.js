@@ -80,15 +80,27 @@ const App = () => {
     const found = persons.findIndex(
       (element) => element.name.toLowerCase() === newName.toLowerCase()
     );
-
     // Tehdään henkiloObjecti, joka lisätään persons taulukkoon, jos nimeä ei löydy entuudestaan
     if (found === -1) {
       const henkiloObject = {
         name: newName,
         number: uusiNumero,
       };
-      noteService.create(henkiloObject).then((response) => {});
-      setPersons(persons.concat(henkiloObject));
+      noteService.create(henkiloObject)
+      .then((response) => {
+        setPersons(persons.concat(henkiloObject));
+      })
+      .catch(error => {
+        // pääset käsiksi palvelimen palauttamaan virheilmoitusolioon näin
+        setMessage(`${JSON.stringify(error.response.data)}`)
+        setTimeout(() => {
+          setMessage(null)
+        },3000)
+        console.log(error.response.data)
+        console.log("Virhe ilmoitus")
+      })
+
+
       // tyhjentää syötekentät
       setMessage(`Added ${newName}`)
       setTimeout(() => {
@@ -98,7 +110,7 @@ const App = () => {
       asetaNumero("");
     } else {
       alert(`${newName} is already added to phonebook`);
-    }
+    } 
   };
   // Numeron poisto puhelinluettelosta 
   const deleteNumber = (id) => {
