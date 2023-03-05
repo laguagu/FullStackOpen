@@ -1,14 +1,9 @@
-require('dotenv').config()
-const http = require('http')
-const express = require('express')
-const app = express()
-const cors = require('cors')
-
-// MongoDB
+const app = require('./app')
+const config = require('./utils/config')
+// MONGODB
 const Blog = require('./models/blog')
 
-app.use(cors())
-app.use(express.json())
+
 
 //ROUTET GET
 app.get('/api/blogs', (request, response) => {
@@ -35,7 +30,6 @@ app.post('/api/blogs', (request, response) => {
     })
 })
 
-const PORT = process.env.PORT
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+app.listen(config.PORT, () => {
+  console.log(`Server running on port ${config.PORT}`)
 })
