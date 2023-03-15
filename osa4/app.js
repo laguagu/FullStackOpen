@@ -2,7 +2,7 @@ const config = require("./utils/config");
 const express = require("express");
 require('express-async-errors')
 const app = express();
-const blogRouter = require("./controllers/notes");
+const blogRouter = require("./controllers/blog");
 const logger = require("./utils/middleware");
 const mongoose = require("mongoose");
 

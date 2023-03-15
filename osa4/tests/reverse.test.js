@@ -63,6 +63,7 @@ describe("Favorite blog", () => {
       __v: 0,
     },
   ];
+  
   test("Most likes blog", () => {
     bestBlog = favoriteBlog(blogs);
     expect(bestBlog.title).toEqual(blogs[0].title);

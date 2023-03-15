@@ -1,16 +1,13 @@
 const mongoose = require("mongoose");
 const supertest = require("supertest");
 const app = require("../app");
-const Blog = require('../models/blog')
-
-const listHelper = require("../utils/list_helper").create;
-
+const blog = require("../models/blog");
+const Blog = require("../models/blog");
 
 // const api = supertest(app);
 const api = supertest(`http://localhost:3003`);
 
 describe("Blog post tests", () => {
-
   test("Blog posts sum match length of blogs ", async () => {
     const response = await api.get("/api/blogs").expect(200);
     expect(response.body).toHaveLength(response.body.length);
@@ -33,7 +30,6 @@ describe("Blog post tests", () => {
     };
     const initialResponse = await api.get("/api/blogs");
     const initialBlogs = initialResponse.body.length;
-
     await api
       .post("/api/blogs")
       .send(newBlog)
@@ -49,20 +45,33 @@ describe("Blog post tests", () => {
 });
 
 describe("Check blog post likes", () => {
-
   test("If the number of likes is not indicated, set it to 0", async () => {
     const newBlog = {
       title: "Zero likes",
       author: "Zero",
       url: "https://Zero.com",
     };
-    
+
     const response = await api.post("/api/blogs").send(newBlog);
     expect(response.status).toBe(201);
     expect(response.body.likes).toBe(0);
-  })
-})
+  });
+});
 
+describe("Blog delete", () => {
+  test("Delete blog post with status code 204 if id is valid", async () => {
+    const post = await Blog.find({});
+    const postToDelete = post[0];
+    console.log(post);
+
+    await api.delete(`/api/blogs/${postToDelete.id}`).expect(204);
+
+    const blogsAtEnd = await Blog.find({});
+    console.log("Deletet");
+    expect(blogsAtEnd).toHaveLength(post.length - 1);
+
+  });
+});
 
 afterAll(async () => {
   await mongoose.connection.close();
