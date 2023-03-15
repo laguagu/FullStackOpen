@@ -2,10 +2,15 @@ const blogRouter = require("express").Router();
 const Blog = require("../models/blog");
 
 //ROUTET GET
-blogRouter.get("/blogs", (request, response) => {
-  Blog.find({}).then((blogs) => {
-    response.json(blogs);
-  });
+blogRouter.get("/", async (request, response) => {
+  const blog_post = await Blog.find({});
+  console.log("operation returned the following notes", blog_post);
+  response.json(blog_post);
+});
+
+blogRouter.get("/blogs", async (request, response) => {
+  const blog_post = await Blog.find({});
+  response.json(blog_post);
 });
 
 blogRouter.get("/", (req, res) => {
@@ -13,13 +18,15 @@ blogRouter.get("/", (req, res) => {
 });
 
 // POST
-blogRouter.post("/blogs", (request, response) => {
+blogRouter.post("/blogs", async (request, response) => {
   const blog = new Blog(request.body);
+  if (!blog.likes) {
+    blog.likes = 0;
+  }
 
-  blog.save().then((result) => {
-    console.log("Note Saved");
-    response.status(201).json(result);
-  });
+  const result = await blog.save();
+  console.log("Note Saved");
+  response.status(201).json(result);
 });
 
 module.exports = blogRouter;

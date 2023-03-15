@@ -1,13 +1,15 @@
 const config = require("./utils/config");
 const express = require("express");
+require('express-async-errors')
 const app = express();
 const blogRouter = require("./controllers/notes");
 const logger = require("./utils/middleware");
 const mongoose = require("mongoose");
 
 const mongoUrl = process.env.MONGODB_URI
-mongoose.connect(mongoUrl)
+
 mongoose.set('strictQuery', false)
+mongoose.connect(mongoUrl)
 
 // Middlewares
 app.use(express.json());

@@ -1,3 +1,4 @@
+
 const dummy = (blogs) => {
   return 1;
 };
@@ -25,8 +26,18 @@ const favoriteBlog = (blogs) => {
   return winnerBlog;
 };
 
+const create = async (req, res) => {
+  const blog = new Blog(req.body);
+  if (!blog.likes) {
+    blog.likes = 0;
+  }
+  const savedBlog = await blog.save();
+  res.status(201).json(savedBlog.toJSON());
+};
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
+  create
 };
