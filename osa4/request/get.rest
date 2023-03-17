@@ -1,0 +1,17 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkFrdSIsImlkIjoiNjQxMzI5NDg1MjkzNjAyYTRlYzkxY2I4IiwiaWF0IjoxNjc5MDQ2NjY0fQ.b3b_3A0ufK2CteNvW4Ydg8A4Fr6DR6qFwZkygqrQICc
+
+{
+    "title": "Keittokirja",
+    "author": "Saku",
+    "url": "Saku.Blog",
+    "likes": 6,
+    "userId":"641329485293602a4ec91cb8"
+}
+
+# {
+#   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkFrdSIsImlkIjoiNjQxMzI5NDg1MjkzNjAyYTRlYzkxY2I4IiwiaWF0IjoxNjc5MDQ2NjY0fQ.b3b_3A0ufK2CteNvW4Ydg8A4Fr6DR6qFwZkygqrQICc",
+#   "username": "Aku",
+#   "name": "Aku Legolas"
+# }
