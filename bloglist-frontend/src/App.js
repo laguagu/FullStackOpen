@@ -2,12 +2,25 @@ import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import Notification from "./components/Notification";
+import "./index.css";
+
+const Message = ({ message }) => {
+  if (message === null) {
+    return null;
+  }
+
+  return <div className="message">{message}</div>;
+};
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [newBlog, setNewBlog] = useState("");
+  const [newTitle, setNewTitle] = useState("");
+  const [newAuthor, setNewAuthor] = useState("");
+  const [newUrl, setNewUrl] = useState("");
   const [errorMessage, setErrorMessage] = useState(null);
 
+  const [message, setMessage] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
@@ -15,15 +28,15 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
   }, []);
-  
+
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
+    const loggedUserJSON = window.localStorage.getItem("loggedBlogUser");
     if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      setUser(user)
-      blogService.setToken(user.token)
+      const user = JSON.parse(loggedUserJSON);
+      setUser(user);
+      blogService.setToken(user.token);
     }
-  }, [])
+  }, []);
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -33,38 +46,36 @@ const App = () => {
         username,
         password,
       });
-      
-      window.localStorage.setItem(
-        'loggedBlogUser', JSON.stringify(user) )
+
+      window.localStorage.setItem("loggedBlogUser", JSON.stringify(user));
 
       blogService.setToken(user.token);
       setUser(user);
       setUsername("");
       setPassword("");
     } catch (exception) {
-      setErrorMessage("wrong credentials");
+      setErrorMessage("Wrong username or password");
       setTimeout(() => {
         setErrorMessage(null);
       }, 5000);
     }
   };
   const loginForm = () => (
-    <div>
+    <>
+      <Notification message={errorMessage} />
       <h2>Log in to application</h2>
       <form onSubmit={handleLogin}>
-        <div>
-          Username
-          <input
-            type="text"
-            value={username}
-            name="Username"
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
+        Username
+        <input
+          type="text"
+          value={username}
+          name="Username"
+          onChange={({ target }) => setUsername(target.value)}
+        />
         <div>
           Password
           <input
-            type="text"
+            type="password"
             value={password}
             name="Password"
             onChange={({ target }) => setPassword(target.value)}
@@ -72,46 +83,79 @@ const App = () => {
         </div>
         <button type="submit">Login</button>
       </form>
-    </div>
+    </>
   );
 
-  const handleBlogChange = (event) => {
-    setNewBlog(event.target.value);
+  const handleTitleChange = (event) => {
+    setNewTitle(event.target.value);
   };
 
   const addBlog = (event) => {
     event.preventDefault();
     const blogObject = {
-      title: newBlog,
-      likes: 10,
+      title: newTitle,
+      author: newAuthor,
+      url: newUrl,
     };
 
     blogService.create(blogObject).then((returnedBlog) => {
       setBlogs(blogs.concat(returnedBlog));
-      setNewBlog("");
+      setNewTitle("");
+      setNewUrl("");
+      setNewAuthor("");
+      setMessage(`Added ${newTitle} by ${newAuthor}`);
+      setTimeout(() => {
+        setMessage(null);
+      }, 3000);
     });
   };
 
   const BlogForm = () => (
     <form onSubmit={addBlog}>
-      <input value={newBlog} onChange={handleBlogChange} />
-      <button type="submit">Save</button>
+      <div>
+        <h2>Create New</h2>
+        title:
+        <input value={newTitle} onChange={handleTitleChange} />
+      </div>
+      <div>
+        author:
+        <input
+          value={newAuthor}
+          onChange={(e) => setNewAuthor(e.target.value)}
+        />
+      </div>
+      <div>
+        url:
+        <input value={newUrl} onChange={(e) => setNewUrl(e.target.value)} />
+      </div>
+      <button type="submit">Create</button>
     </form>
   );
+
+  const logout = () => {
+    window.localStorage.clear();
+    setUser(null);
+  };
 
   if (user === null) {
     return <div>{loginForm()}</div>;
   }
 
   return (
-    <div>
-      <h2>Blogs</h2>
-      <p>{user.username} logged in</p>
-      {BlogForm()}
-      {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
-      ))}
-    </div>
+    <main>
+      <>
+        <h2>Blogs</h2>
+        <Message message={message} />
+        <div>
+          {user.username} logged in
+          <button onClick={() => logout()}>Logout</button>
+        </div>
+        {BlogForm()}
+        {blogs.map((blog) => (
+          <Blog key={blog.id} blog={blog} />
+        ))}
+      </>
+    </main>
   );
 };
 
