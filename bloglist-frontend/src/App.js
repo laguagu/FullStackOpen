@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
@@ -21,17 +21,21 @@ const App = () => {
   const [newTitle, setNewTitle] = useState("");
   const [newAuthor, setNewAuthor] = useState("");
   const [newUrl, setNewUrl] = useState("");
-  const [errorMessage, setErrorMessage] = useState(null);
 
   const [message, setMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [loginVisible, setLoginVisible] = useState(false);
+  const blogFormRef = useRef();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
   }, []);
+
+   // järjestetään blogit likes-määrän mukaiseen suuruusjärjestykseen
+  const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogUser");
@@ -63,20 +67,12 @@ const App = () => {
       }, 5000);
     }
   };
-
-  const handleTitleChange = (event) => {
-    setNewTitle(event.target.value);
-  };
-
-  const addBlog = (event) => {
-    event.preventDefault();
-    const blogObject = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl,
-    };
-
-    blogService.create(blogObject).then((returnedBlog) => {
+//Blogin lisäys
+  const addBlog = (blogObject) => {
+    blogFormRef.current.toggleVisibility();
+    blogService
+    .create(blogObject)
+    .then((returnedBlog) => {
       setBlogs(blogs.concat(returnedBlog));
       setNewTitle("");
       setNewUrl("");
@@ -88,28 +84,20 @@ const App = () => {
     });
   };
 
-  const blogForm = () => (
-    <form onSubmit={addBlog}>
-      <div>
-        <h2>Create New</h2>
-        title:
-        <input value={newTitle} onChange={handleTitleChange} />
-      </div>
-      <div>
-        author:
-        <input
-          value={newAuthor}
-          onChange={(e) => setNewAuthor(e.target.value)}
-        />
-      </div>
-      <div>
-        url:
-        <input value={newUrl} onChange={(e) => setNewUrl(e.target.value)} />
-      </div>
-      <button type="submit">Create</button>
-    </form>
-  );
-
+//BLOGIN POISTO
+const removeBlog = async (id) => {
+  if (window.confirm("Are you sure you want to delete this blog?")) {
+    try {
+      await blogService.remove(id);
+      setBlogs(blogs.filter((blog) => blog.id !== id));
+    } catch (exception) {
+      setErrorMessage("Failed to delete the blog");
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
+    }
+  }
+};
   const logout = () => {
     window.localStorage.clear();
     setUser(null);
@@ -148,9 +136,11 @@ const App = () => {
           {user.username} logged in
           <button onClick={() => logout()}>Logout</button>
         </div>
-        {blogForm()}
-        {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} />
+        <Togglable buttonLabel="Add New post" ref={blogFormRef}>
+          <BlogForm onSubmit={addBlog} />
+        </Togglable>
+        {sortedBlogs.map((blog) => (
+          <Blog key={blog.id} blog={blog} removeBlog={removeBlog} user={user}/>
         ))}
       </>
     </main>
