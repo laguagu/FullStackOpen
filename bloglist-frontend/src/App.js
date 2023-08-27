@@ -67,6 +67,7 @@ const App = () => {
       }, 5000);
     }
   };
+  
 //Blogin lisäys
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility();

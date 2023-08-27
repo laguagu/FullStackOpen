@@ -1,8 +1,7 @@
-
 import React from "react";
 import Togglable from "./Togglable";
 import blogService from "../services/blogs";
-
+import PropTypes from 'prop-types'
 
 const Blog = ({ blog, blogs, setBlogs, removeBlog, user }) => {
   const blogStyle = {
@@ -50,5 +49,9 @@ const Blog = ({ blog, blogs, setBlogs, removeBlog, user }) => {
     </div>
   );
 };
+
+Togglable.propTypes = {
+  buttonLabel: PropTypes.string.isRequired
+}
 
 export default Blog;

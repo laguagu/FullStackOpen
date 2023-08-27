@@ -26,7 +26,7 @@ const update = async (id, updatedObject) => {
 }
 const getById = async (id) => {
   const response = await axios.get(`${baseUrl}/${id}`)
-  return response.data
+return response.data  
 } 
 
 const remove = async (id) => {
