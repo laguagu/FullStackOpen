@@ -1,14 +1,13 @@
 const LoginForm = ({
-    handleLogin,
-    username,
-    password,
-    handleUsernameChange,
-    handlePasswordChange,
-   }) => {
-    return(
+  handleLogin,
+  username,
+  password,
+  handleUsernameChange,
+  handlePasswordChange,
+}) => {
+  return(
     <>
       <h2>Log in to application</h2>
-      
       <form onSubmit={handleLogin}>
         <div>
           Username
@@ -32,6 +31,6 @@ const LoginForm = ({
       </form>
     </>
   )
-  };
-  
-  export default LoginForm
+};
+
+export default LoginForm

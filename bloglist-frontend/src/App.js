@@ -34,7 +34,7 @@ const App = () => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
   }, []);
 
-   // järjestetään blogit likes-määrän mukaiseen suuruusjärjestykseen
+  // järjestetään blogit likes-määrän mukaiseen suuruusjärjestykseen
   const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes);
 
   useEffect(() => {
@@ -67,13 +67,11 @@ const App = () => {
       }, 5000);
     }
   };
-  
-//Blogin lisäys
+
+  //Blogin lisäys
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility();
-    blogService
-    .create(blogObject)
-    .then((returnedBlog) => {
+    blogService.create(blogObject).then((returnedBlog) => {
       setBlogs(blogs.concat(returnedBlog));
       setNewTitle("");
       setNewUrl("");
@@ -85,20 +83,20 @@ const App = () => {
     });
   };
 
-//BLOGIN POISTO
-const removeBlog = async (id) => {
-  if (window.confirm("Are you sure you want to delete this blog?")) {
-    try {
-      await blogService.remove(id);
-      setBlogs(blogs.filter((blog) => blog.id !== id));
-    } catch (exception) {
-      setErrorMessage("Failed to delete the blog");
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
+  //BLOGIN POISTO
+  const removeBlog = async (id) => {
+    if (window.confirm("Are you sure you want to delete this blog?")) {
+      try {
+        await blogService.remove(id);
+        setBlogs(blogs.filter((blog) => blog.id !== id));
+      } catch (exception) {
+        setErrorMessage("Failed to delete the blog");
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
+      }
     }
-  }
-};
+  };
   const logout = () => {
     window.localStorage.clear();
     setUser(null);
@@ -141,7 +139,7 @@ const removeBlog = async (id) => {
           <BlogForm onSubmit={addBlog} />
         </Togglable>
         {sortedBlogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} removeBlog={removeBlog} user={user}/>
+          <Blog key={blog.id} blog={blog} removeBlog={removeBlog} user={user} />
         ))}
       </>
     </main>
