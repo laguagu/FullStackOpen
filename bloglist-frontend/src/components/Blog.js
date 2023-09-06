@@ -3,6 +3,7 @@ import Togglable from "./Togglable";
 import blogService from "../services/blogs";
 import PropTypes from "prop-types"
 
+
 const Blog = ({ blog, blogs, setBlogs, removeBlog, user }) => {
   const blogStyle = {
     paddingTop: 10,
