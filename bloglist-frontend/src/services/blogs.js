@@ -1,5 +1,5 @@
-import axios from 'axios'
-const baseUrl = '/api/blogs'
+import axios from "axios"
+const baseUrl = "/api/blogs"
 
 let token = null
 
@@ -26,12 +26,13 @@ const update = async (id, updatedObject) => {
 }
 const getById = async (id) => {
   const response = await axios.get(`${baseUrl}/${id}`)
-return response.data  
-} 
+  return response.data
+}
 
 const remove = async (id) => {
   const response = await axios.delete(`${baseUrl}/${id}`)
   return response.data
 }
-// eslint-disable-next-line import/no-anonymous-default-export
-export default { getAll, create, setToken, update, getById, remove }
+
+const blogService = { getAll, create, setToken, update, getById, remove }
+export default blogService;
