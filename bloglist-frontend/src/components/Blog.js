@@ -1,10 +1,9 @@
 import React from "react";
 import Togglable from "./Togglable";
 import blogService from "../services/blogs";
-import PropTypes from "prop-types"
+import PropTypes from "prop-types";
 
-
-const Blog = ({ blog, blogs, setBlogs, removeBlog, user }) => {
+const Blog = ({ blog, setBlogs, removeBlog, user }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -18,11 +17,10 @@ const Blog = ({ blog, blogs, setBlogs, removeBlog, user }) => {
       ...blog,
       likes: blog.likes + 1,
     });
-    console.log("Päivitetty",updatedBlog)
-    const updatedBlogs = blogs.map((b) =>
-      b.id === updatedBlog.id ? updatedBlog : b
+    console.log("Päivitetty", updatedBlog);
+    setBlogs((prevBlogs) =>
+      prevBlogs.map((b) => (b.id === updatedBlog.id ? updatedBlog : b))
     );
-    setBlogs(updatedBlogs);
   };
 
   const showDeleteButton = () => {
@@ -51,8 +49,11 @@ const Blog = ({ blog, blogs, setBlogs, removeBlog, user }) => {
   );
 };
 
-Togglable.propTypes = {
-  buttonLabel: PropTypes.string.isRequired
-}
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  setBlogs: PropTypes.func.isRequired,
+  removeBlog: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired,
+};
 
 export default Blog;

@@ -72,11 +72,11 @@ const App = () => {
   const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility();
     blogService.create(blogObject).then((returnedBlog) => {
+      setMessage(`Added ${newTitle} by ${newAuthor}`);
       setBlogs(blogs.concat(returnedBlog));
       setNewTitle("");
       setNewUrl("");
       setNewAuthor("");
-      setMessage(`Added ${newTitle} by ${newAuthor}`);
       setTimeout(() => {
         setMessage(null);
       }, 3000);
@@ -101,6 +101,7 @@ const App = () => {
     window.localStorage.clear();
     setUser(null);
   };
+
 
   const loginForm = () => {
     return (
@@ -135,7 +136,7 @@ const App = () => {
           {user.username} logged in
           <button onClick={() => logout()}>Logout</button>
         </div>
-        <Togglable buttonLabel="Add New post" ref={blogFormRef}>
+        <Togglable buttonLabel="Add new post" ref={blogFormRef}>
           <BlogForm onSubmit={addBlog} />
         </Togglable>
         {sortedBlogs.map((blog) => (
