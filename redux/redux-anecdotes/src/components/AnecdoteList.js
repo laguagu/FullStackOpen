@@ -2,9 +2,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { voteForAnekdootti } from "../reducers/anecdoteReducer";
 
 
-const AnecdoteList = () =>  {
-    const anecdotes = useSelector((state) => state);
-    const dispatch = useDispatch();
+const AnecdoteList = () => {
+  const dispatch = useDispatch();
+  const anecdotes = useSelector((state) => {
+    const filter = state.filter.toLowerCase(); // Haetaan filtteri Redux-tilasta
+    return state.anecdotes.filter((anecdote) =>
+      anecdote.content.toLowerCase().includes(filter)
+    );
+  });
   
     return(
         <div>
