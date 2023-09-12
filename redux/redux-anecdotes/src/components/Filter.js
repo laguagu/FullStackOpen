@@ -8,7 +8,6 @@ const Filter = () => {
 
   const handleChange = (event) => {
     const filterText = event.target.value;
-    console.log(filterText)
     dispatch(setFilter(filterText)); // Päivitetään filtterin tila Reduxin avulla
   };
 
