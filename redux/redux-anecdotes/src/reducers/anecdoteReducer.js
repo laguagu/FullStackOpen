@@ -1,13 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-
-const anecdotesAtStart = [
-  "If it hurts, do it more often",
-  "Adding manpower to a late software project makes it later!",
-  "The first 90 percent of the code accounts for the first 90 percent of the development time...The remaining 10 percent of the code accounts for the other 90 percent of the development time.",
-  "Any fool can write code that a computer can understand. Good programmers write code that humans can understand.",
-  "Premature optimization is the root of all evil.",
-  "Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.",
-];
+import { createNew, getAll } from "../services/anecdotes";
 
 const getId = () => (100000 * Math.random()).toFixed(0);
 
@@ -18,8 +10,6 @@ export const asObject = (anecdote) => {
     votes: 0,
   };
 };
-
-const initialState = anecdotesAtStart.map(asObject);
 
 const anecdoteSlice = createSlice({
   name: "anecdotes",
@@ -36,19 +26,23 @@ const anecdoteSlice = createSlice({
         .map((anecdote) => (anecdote.id === id ? updatedAnecdote : anecdote))
         .sort((a, b) => b.votes - a.votes);
     },
-    createAnekdootti: (state, action) => {
-      const newAnect = asObject(action.payload);
-      state.push(newAnect);
-    },
     appendAnecdoot(state, action) {
-      state.push(action.payload)
+      state.push(action.payload);
     },
     setAnecdoot(state, action) {
-      return action.payload
-    }
+      return action.payload;
+    },
   },
 });
 
-export const { voteForAnekdootti, createAnekdootti, appendAnecdoot, setAnecdoot } = anecdoteSlice.actions;
+export const createAnekdootti = (content) => {
+  return async (dispatch) => {
+    const newAnecdote = await createNew(content);
+    dispatch(appendAnecdoot(newAnecdote));
+  };
+};
+
+export const { voteForAnekdootti, appendAnecdoot, setAnecdoot } =
+  anecdoteSlice.actions;
 
 export default anecdoteSlice.reducer;

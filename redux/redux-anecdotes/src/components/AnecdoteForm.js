@@ -15,6 +15,7 @@ const NewAnecdote = () => {
       // Varmistetaan, että syöte ei ole tyhjä
       dispatch(createAnekdootti(anecdote));
       showNotification(`You created ${anecdote}`);
+      setAnecdote("");
     }
   };
 

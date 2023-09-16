@@ -3,9 +3,6 @@ import filterReducer from "./reducers/filterReducer";
 import notificationReducer from "./reducers/notificationSlice";
 import anecdoteReducer from "./reducers/anecdoteReducer";
 
-
-
-
 const store = configureStore({
   reducer: {
     anecdotes: anecdoteReducer,
@@ -13,7 +10,5 @@ const store = configureStore({
     notification: notificationReducer,
   },
 });
-
-
 
 export default store
