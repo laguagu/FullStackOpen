@@ -3,14 +3,16 @@ import Notification from "./components/Notification";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getAnecdotes, updateAnecdote } from "./request";
-import { NotificationProvider, NotificationContext } from "./NotificationContext";
-import { useContext } from 'react'
-
+import {
+  NotificationProvider,
+  NotificationContext,
+} from "./NotificationContext";
+import { useContext } from "react";
 
 const AppContent = () => {
   const queryClient = useQueryClient();
-  const { dispatch }  = useContext(NotificationContext);
-  
+  const { dispatch } = useContext(NotificationContext);
+
   const result = useQuery({
     queryKey: ["anecdotes"],
     queryFn: getAnecdotes,
@@ -29,7 +31,7 @@ const AppContent = () => {
 
   const handleVote = (anecdote) => {
     updateAnecdoteMutation.mutate({ ...anecdote, votes: anecdote.votes + 1 });
-    dispatch({ type: 'VOTE', payload: 'Anekdootti äänestetty!' });
+    dispatch({ type: "VOTE", payload: "Anekdootti äänestetty!" });
   };
 
   if (result.isLoading) {
@@ -46,28 +48,26 @@ const AppContent = () => {
   }
 
   return (
-      <div>
-        <h3>Anecdote app</h3>
-
-        <Notification />
-        <AnecdoteForm />
-
-        {anecdotes.map((anecdote) => (
-          <div key={anecdote.id}>
-            <div>{anecdote.content}</div>
-            <div>
-              has {anecdote.votes}
-              <button onClick={() => handleVote(anecdote)}>vote</button>
-            </div>
+    <div>
+      <h3>Anecdote app</h3>
+      {anecdotes.map((anecdote) => (
+        <div key={anecdote.id}>
+          <div>{anecdote.content}</div>
+          <div>
+            has {anecdote.votes}
+            <button onClick={() => handleVote(anecdote)}>vote</button>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
+    </div>
   );
 };
 
 const App = () => {
   return (
     <NotificationProvider>
+      <Notification />
+      <AnecdoteForm />
       <AppContent />
     </NotificationProvider>
   );
