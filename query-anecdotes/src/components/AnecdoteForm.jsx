@@ -39,7 +39,6 @@ const AnecdoteForm = () => {
         }
       }
       );
-      dispatch({type:"VOTE", payload: "Uusi anekdootti luotu!"})
     }
   };
 
